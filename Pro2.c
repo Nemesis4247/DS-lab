@@ -1,16 +1,29 @@
 #include<stdio.h>
 #include<stdlib.h>
+///@brief This variable stores the number of nodes and hence the maximum size of the deque
 int size=0;
+///@brief This variable stores the number of entries in the deque
+ int entries=0;
+ /**@brief Contains the nodes of the linked list.
+ * 
+ * 
+ * Contains Data for each node of the deque and a pointer for next node.
+*  
+**/
 struct node
 {
     int data;
     struct node *link;
 }*frontmost,*rearmost;
-void insertF(int x)
+/**@brief This function inserts a new node from front
+*  
+* @param No parameters
+**/
+void insertF()
 {
     size++;
     struct node *newnode = (struct node*) malloc(sizeof(struct node));
-    newnode->data=x;
+    newnode->data=-1;
     newnode->link=NULL;
     if(frontmost==NULL)
     {
@@ -24,11 +37,15 @@ void insertF(int x)
         frontmost=newnode;
     }
 }
-void insertR(int x)
+/**@brief This function inserts a new node from rear
+*  
+* @param No parameters
+**/
+void insertR()
 {
     size++;
-  struct node *newnode = (struct node*) malloc(sizeof(struct node));;
-  newnode->data=x;
+  struct node *newnode = (struct node*) malloc(sizeof(struct node));
+  newnode->data=-1;
   newnode->link=NULL;
   if(frontmost==NULL)
   {
@@ -43,6 +60,12 @@ void insertR(int x)
       rearmost->link==NULL;
   }
 }
+/**@brief This function is used to delete a node from front
+*  
+* @param No parameters
+*
+* @return nothing
+*/
 void deleteF()
 {
     if(frontmost==NULL)
@@ -55,16 +78,22 @@ void deleteF()
         struct node *p=frontmost;
         frontmost=NULL;
         rearmost=NULL;
-        //delete p;
+        free(p);
     }
     else
     {
         size--;
         struct node *p=frontmost;
         frontmost=frontmost->link;
-       // delete p;
+        free(p);
     }
 }
+/**@brief This function is used to delete a node from rear
+*  
+* @param No parameters
+*
+* @return nothing
+*/
 void deleteR()
 {
     if(frontmost==NULL)
@@ -77,27 +106,81 @@ void deleteR()
         struct node *p=frontmost;
         frontmost=NULL;
         rearmost=NULL;
-        //delete p;
+        free(p);
     }
+
     else
     {
         size--;
-        struct node *p1=rearmost;
         struct node *p=frontmost;
         while((p->link)!=rearmost)
         {
             p=p->link;
         }
         rearmost=p;
-        //delete p1;
+        p=p->link;
+        free(p);
+        rearmost->link=NULL;
     }
+}
+/**@brief This function inserts a new element from front
+*  
+* @param data of element to be inserted
+**/
+void putF(int x)
+{
+    entries++;
+    struct node *p=frontmost;
+    if((p->link==NULL)&&(p->data==-1))
+    {
+        p->data=x;
+        return;
+    }
+    while (((p->link)!=NULL))
+    {
+        if(((p->link)->data)!=-1)
+        break;
+        p=p->link;
+    }
+    p->data=x;
+}
+/**@brief This function inserts a new element from rear
+*  
+* @param data of element to be inserted
+**/
+void putR(int x)
+{
+    entries++;
+    struct node *p=frontmost;
+    if((p->link==NULL)&&(p->data==-1))
+    {
+        p->data=x;
+        return;
+    }
+    while (((p->link)!=NULL))
+    {
+        if(((p->link)->data)!=-1)
+        break;
+        p=p->link;
+    }
+    if(p->link==NULL)
+    {
+        p->data=x;
+        return;
+    }
+    p=p->link;
+    while((p->data!=-1))
+    {
+        p=p->link;
+    }
+    p->data=x;
 }
 int main()
 {
-  struct node *p;
-  int Maxsize=1;
-  //int size=0;
+  struct node *p=frontmost;
+  //int Maxsize=1;
   int choice;
+  insertF();
   int x;
   while(1)
     {
@@ -114,49 +197,129 @@ int main()
         case 1: 
             printf("Enter Data\n");
             scanf("%d",&x);
-            if(size==Maxsize)
+            if(size==entries)
             {
-                Maxsize=2*Maxsize;
+                int l=size;
+                while(l--)
+                {
+                    insertF();
+                }
             }
-            insertF(x);
+            if(frontmost->data!=-1)
+            {
+                insertF();
+                deleteR();
+            }
+            putF(x);
+            printf("Inserted Successfully!\n");
             break;
         case 2:    
             printf("Enter Data\n");
             
             scanf("%d",&x);
-            if(size==Maxsize)
+           if(size==entries)
             {
-                Maxsize=2*Maxsize;
-              }
-              insertR(x);
-              break;
-        case 3: 
-            deleteF();
-            if(((float)size==(float)Maxsize/2)&&(Maxsize%2==0))
-            {
-                Maxsize=Maxsize/2;
+                int l=size;
+                while(l--)
+                {
+                    insertR();
+                }
             }
+            if(rearmost->data!=-1)
+            {
+                insertR();
+                deleteF();
+            }
+            putR(x);
+            printf("Inserted Successfully!\n");
+            break;
+        case 3: 
+            p=frontmost;
+            while (((p)!=NULL))
+            {
+                if((p)->data!=-1)
+                break;
+                p=p->link;
+            }
+            if(p==NULL)
+            {
+                printf("Cannot delete list is empty!\n");
+                goto v;
+            }
+            if(p->data!=-1)
+            {
+                p->data=-1;
+                entries--;
+            }
+            if(((float)entries==(float)size/2)&&(size%2==0))
+            {
+                int l=entries;
+                while(l--)
+                {
+                    if(frontmost->data==-1)
+                    {deleteF();}
+                    if(rearmost->data==-1)
+                    {deleteR();}
+                }
+            }
+            
+            else
+            {
+                printf("Deleted Successfully!\n");
+            }
+            v:
             break;
         case 4: 
-            deleteR(frontmost,rearmost,&size);
-            if(((float)size==(float)Maxsize/2)&&(Maxsize%2==0))
+            p=frontmost;
+            while (((p)!=NULL))
             {
-                Maxsize=Maxsize/2;
+                if((p)->data!=-1)
+                break;
+                p=p->link;
             }
+            if(p==NULL)
+            {
+                printf("Cannot delete list is empty!\n");
+                goto u;
+            }
+            while((p->link)!=NULL)
+            {
+                if((p->link)->data==-1)
+                break;
+                p=p->link;
+            }
+            p->data=-1;
+            entries--;
+            if(entries==size/2)
+            {
+                int l=entries;
+                while(l--)
+                {
+                    if(frontmost->data==-1)
+                    {deleteF();}
+                    else if(rearmost->data==-1)
+                    {
+                        deleteR();
+                    }
+                }
+            }
+            printf("Deleted Successfully!\n");
+            u:
             break;
         case 5: 
-            printf("Number of entries=%d\n",size);
+            printf("Number of entries=%d\n",entries);
             break;
         case 6: 
-            printf("Maximum Size=%d\n",Maxsize);
+            printf("Maximum Size=%d\n",size);
             break;
         case 7:
         	p=frontmost;
-        	while(p!=NULL)
+        	while(p!=rearmost)
         	{
         		printf("%d\t",p->data);
         		p=p->link;
 			}
+            printf("%d\t",p->data);
 			printf("\n");
 			break;
         case 8: 

@@ -4,7 +4,12 @@
 #include<stdlib.h>
 #include<stdbool.h>
 #define bool _Bool
-
+/**@brief Contains the nodes of doubly circular linked list.
+ * 
+ * 
+ * Contains roll no, name, date of birth, address and phone number for each student
+*  
+**/
 struct node
 {
     int roll_no;
@@ -24,7 +29,10 @@ bool isempty_queue();
 int queue_array[MAX];
 int rear = - 1;
 int front = - 1;
-
+/**@brief This function inserts a new node and hence the record of a new student in the system
+*  
+* @param Student name, Date of birth, address and phone number
+**/
 void insert(char name1[50],char DOB1[50], char address1[100], long long int phone1)
 {
     struct node *newnode=(struct node*)malloc(sizeof(struct node));
@@ -64,17 +72,11 @@ void insert(char name1[50],char DOB1[50], char address1[100], long long int phon
         }
         else
         {
-           /* newnode->left=first->left;
-            newnode->right=first;
-            (first->left)->right=newnode;
-            first->left=newnode;
-            newnode->roll_no=first_element();
-            pop();*/
             struct node *p=first;
             int roll =first_element();
             if(((first->roll_no)<roll)&&(((first->left)->roll_no)>roll))
             {
-                while(((p->roll_no)<roll)&&(((p->right)->roll_no)>roll))
+                while(((p->roll_no)>roll)||(((p->right)->roll_no)<roll))
                 {
                     p=p->right;
                 }
@@ -96,40 +98,48 @@ void insert(char name1[50],char DOB1[50], char address1[100], long long int phon
     }
     
 }
-/*
-void swap1(char **str1_ptr, char **str2_ptr) 
-{ 
-  char *temp = *str1_ptr; 
-  *str1_ptr = *str2_ptr; 
-  *str2_ptr = temp; 
-} 
+/**@brief Swaps the entire data of two nodes
+*  
+* @param Two pointer objects of node.
+**/
 void swap_data(struct node *p,struct node *q)
 {
     int temp=p->roll_no;
     p->roll_no=q->roll_no;
     q->roll_no=temp;
-    long int temp1=p->phone;
+    long long int temp1=p->phone;
     p->phone=q->phone;
     q->phone=temp1;
-    swap1(&(p->name),&(q->name));
-    swap1(&(p->address),&(q->address));
-    swap1(&(p->DOB),&(q->DOB));
+    char temp2[50];
+    strcpy(temp2,p->name);
+    strcpy(p->name,q->name);
+    strcpy(q->name,temp2);
+    char temp3[50];
+    strcpy(temp3,p->DOB);
+    strcpy(p->DOB,q->DOB);
+    strcpy(q->DOB,temp3);
+    char temp4[50];
+    strcpy(temp4,p->address);
+    strcpy(p->address,q->address);
+    strcpy(q->address,temp4);
 }
+///@brief This function sorts the list in lexicographical order as per student names.
 void sort_name()
 {
-    for(struct node *p=first;p!=NULL;p=p->right)
+    for(struct node *p=first;p->right!=first;p=p->right)
     {
-        struct node *top=p;
-        for(struct node *q=p->right;q!=NULL;q=q->right)
+        for(struct node *q=p->right;q!=first;q=q->right)
         {
-            if(strcmp(top->name,q->name)>0)
+            if(strcmp(p->name,q->name)>0)
             {
-                swap_data(top,q);
+                swap_data(p,q);
             }
         }
     }
+    printf("Sorted successfully!\n");
 }
-*/
+
+///@brief This function is used to display the data of all students enrolled
 void print()
 {
     struct node *p=first;
@@ -151,7 +161,12 @@ void print()
         p=p->right;
     }
 }
-
+/**@brief This is function is used to modify the data of a particular student
+*  
+* @param Student roll no, Student name, Date of birth, address and phone number
+*
+* @return nothing
+*/
 void modify(int roll,char name1[50],char DOB1[50], char address1[100], long long int phone1)
 {
     struct node *p=first;
@@ -186,6 +201,12 @@ void modify(int roll,char name1[50],char DOB1[50], char address1[100], long long
     }
 
 }
+/**@brief This function is used to delete the record of a particular student.
+*  
+* @param Student roll no
+*
+* @return nothing
+*/
 
 void delete(int roll)
 {
@@ -228,59 +249,55 @@ void delete(int roll)
     
 }
 
+/** @brief This function is used to search the name of a particular student enrolled in the system
+ * 
+ * @param Student name
+ * 
+ * @return nothing
+ */
 void Search(char name1[50])
 {
     struct node *p=first;
+    int count=0;
+    name1[strlen(name1)-1]='\0';
+    if(first==NULL)
+    {
+         printf("Roll no not found\n");
+         return;
+    }
     if(strcmp(p->name,name1)==0)
     {
         printf("Roll no=%d\n",p->roll_no);
         printf("Name=%s\n",p->name);
         printf("Date of birth=%s\n",p->DOB);
         printf("\n\n");
-        return;
+        count++;
     }
-    else
+    
+
+    p=p->right;
+    while (p!=first)
     {
-        p=p->right;
-         while (strcmp(p->name,name1)&&(p!=first))
-         {
-             p=p->right;
-         }
-         if(p==first)
-        {
-            printf("Roll no not found\n");
-        }
-        else
+        if(strcmp(p->name,name1)==0)
         {
             printf("Roll no=%d\n",p->roll_no);
             printf("Name=%s\n",p->name);
             printf("Date of birth=%s\n",p->DOB);
             printf("\n\n");
-            return;
+            count++;
+            
         }
-        
+        p=p->right;
+    }
+    if(count==0)
+    {
+        printf("Roll no not found\n");
     }
     
 }
 
 int main()
 {
-    /*delete(108);
-    insert("Ishan","10-03-2001","anpara",9027259122);
-    
-    insert("Ashi","01-03-2009","anpara",9027259199);
-    insert("hemant","01-03-2000","anpara",9027259198);
-    insert("hemil","01-03-1999","anpara",9027259197);
-    
-     delete(102);
-    delete(101);
-   // print();
-    insert("Pandey","10-03-2001","anpara",9027259123);
-    insert("Ashish","01-03-2000","anpara",9027259099);
-    insert("Anmol","01-03-2000","anpara",9027259196);
-    //print();
-    modify(103,"karan","sksm","kjnkjn",023023020323);
-    print();*/
     FILE *fp;
     char buffer[1024];
     char name[50],DOB[50],address[100];
@@ -294,7 +311,7 @@ int main()
         printf("1 : Insert student data\n");
         printf("2 : Delete student data\n");
         printf("3 : Modify student data\n");
-        //printf("4 : Sort student data\n");
+        printf("4 : Sort student data\n");
         printf("5 : Search for a student\n");
         printf("6 : Print the list of enrolled students\n");
         printf("7 : Exit program\n");
@@ -303,8 +320,6 @@ int main()
     switch(choice)
     {
         case 1:
-            // FILE *fp;
-            //char buffer[1024];
             fp=fopen("studentData.csv","r");
             fgets(buffer,sizeof(buffer),fp);
             printf("Enter row number:\n");
@@ -326,15 +341,15 @@ int main()
             }
             char *token=strtok(buffer,",");
             token=strtok(NULL,",");
-            strcpy(name,token);
+            strcpy(name,(token));
             token=strtok(NULL,",");
             strcpy(DOB,token);
             token=strtok(NULL,"\"");
-            //token=strtok(NULL,"\"");
             strcpy(address,token);
-            //token=strtok(NULL,",");
             token=strtok(NULL,",");
             phone=atoll(token);
+            if(name[strlen(name)-1]==' ')
+            name[strlen(name)-1]='\0';
             insert(name,DOB,address,phone);
             fclose(fp);
             break;
@@ -353,9 +368,16 @@ int main()
             printf("Enter Address \n");
             scanf("%s",&address);
             modify(roll,name,DOB,address,phone);
+        case 4:
+            sort_name();
+            break;
         case 5:
             printf("Enter Name you want to search:\n");
-            scanf("%s",&name);
+            //scanf("%s",&name);
+            getchar();
+            fgets(name, 50, stdin); 
+            
+            //strcat(name," ");
             Search(name);
             break;
         case 6:
@@ -371,7 +393,10 @@ int main()
     }
 }
 
-
+/** @brief This function is used to insert the deleted roll no in the queue.
+ * 
+ * @param Student roll no
+ */
 void insert_queue(int roll)
 {
     if (rear == MAX - 1)
@@ -384,7 +409,8 @@ void insert_queue(int roll)
         queue_array[rear] =roll;
     }
 }
- 
+/** @brief This function deletes roll no at first position
+ */
 void pop()
 {
     if (front == - 1 || front > rear)
@@ -397,12 +423,20 @@ void pop()
         front = front + 1;
     }
 }
+/**@brief This function checks whether queue is empty or not
+* 
+* @return boolean value true or false
+*/
 bool isempty_queue()
 {
     if((front==-1)||(front>rear))
     return 1;
     return 0;
 }
+/**@brief This function returns the deleted roll no stored at first position in the queue. 
+* 
+* @return integer value of first element
+*/
 int first_element()
 {
     return queue_array[front];
